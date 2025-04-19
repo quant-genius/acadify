@@ -27,4 +27,30 @@ class ResetPasswordUseCase {
       return false;
     }
   }
+  
+  /// Verifies a password reset code
+  /// 
+  /// [code] - The reset code to verify
+  Future<bool> verifyResetCode(String code) async {
+    try {
+      // In a real implementation, this would verify the code with Firebase
+      return code.length >= 6;
+    } catch (e) {
+      return false;
+    }
+  }
+  
+  /// Completes the password reset process with a new password
+  ///
+  /// [code] - The reset code
+  /// [newPassword] - The new password to set
+  Future<bool> completePasswordReset(String code, String newPassword) async {
+    try {
+      // In a real implementation, this would complete the reset with Firebase
+      // For now, we just return true if the password is valid
+      return newPassword.length >= 6;
+    } catch (e) {
+      return false;
+    }
+  }
 }

@@ -40,6 +40,9 @@ extension UserRoleExtension on UserRole {
     return this == UserRole.lecturer || this == UserRole.classRep || this == UserRole.admin;
   }
   
+  /// Alternative name for canModerateContent to maintain backward compatibility
+  bool get canModerate => canModerateContent;
+  
   /// Whether this role can create assignments
   bool get canCreateAssignments {
     return this == UserRole.lecturer || this == UserRole.admin;
@@ -53,5 +56,34 @@ extension UserRoleExtension on UserRole {
   /// Whether this role has admin capabilities
   bool get isAdmin {
     return this == UserRole.admin;
+  }
+  
+  /// Whether this role can create announcements
+  bool get canCreateAnnouncements {
+    return this == UserRole.lecturer || this == UserRole.classRep || this == UserRole.admin;
+  }
+  
+  /// Whether this role can manage courses
+  bool get canManageCourses {
+    return this == UserRole.lecturer || this == UserRole.admin;
+  }
+  
+  /// Create a UserRole from a string
+  static UserRole fromString(String roleString) {
+    switch (roleString.toLowerCase()) {
+      case 'student':
+        return UserRole.student;
+      case 'lecturer':
+        return UserRole.lecturer;
+      case 'classrep':
+      case 'class_rep':
+      case 'class representative':
+        return UserRole.classRep;
+      case 'admin':
+      case 'administrator':
+        return UserRole.admin;
+      default:
+        return UserRole.student;
+    }
   }
 }

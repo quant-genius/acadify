@@ -1,60 +1,59 @@
 
 import 'package:flutter/material.dart';
 
-/// Color constants used throughout the application
+/// Constant colors used throughout the app
 class AppColors {
-  // Primary colors
-  static const Color primary = Color(0xFF673AB7);
-  static const Color primaryLight = Color(0xFFD1C4E9);
-  static const Color primaryDark = Color(0xFF512DA8);
-  static const Color accent = Color(0xFFFF4081);
+  /// Primary color
+  static const Color primary = Color(0xFF6200EA);
   
-  // Neutral colors
+  /// Lighter version of primary color
+  static const Color primaryLight = Color(0xFF9E67FE);
+  
+  /// Darker version of primary color
+  static const Color primaryDark = Color(0xFF3700B3);
+  
+  /// Secondary color
+  static const Color secondary = Color(0xFF03DAC6);
+  
+  /// Lighter version of secondary color
+  static const Color secondaryLight = Color(0xFF66FFF9);
+  
+  /// Darker version of secondary color
+  static const Color secondaryDark = Color(0xFF00A896);
+  
+  /// Background color
   static const Color background = Color(0xFFF5F5F5);
+  
+  /// Surface color
   static const Color surface = Color(0xFFFFFFFF);
+  
+  /// Error color
   static const Color error = Color(0xFFB00020);
+  
+  /// Success color
   static const Color success = Color(0xFF4CAF50);
+  
+  /// Warning color
   static const Color warning = Color(0xFFFFC107);
+  
+  /// Info color
   static const Color info = Color(0xFF2196F3);
   
-  // Text colors
+  /// Text primary color
   static const Color textPrimary = Color(0xFF212121);
-  static const Color textSecondary = Color(0xFF757575);
-  static const Color textHint = Color(0xFF9E9E9E);
-  static const Color textOnPrimary = Color(0xFFFFFFFF);
-  static const Color textOnAccent = Color(0xFFFFFFFF);
   
-  // Border colors
-  static const Color border = Color(0xFFE0E0E0);
+  /// Text secondary color
+  static const Color textSecondary = Color(0xFF757575);
+  
+  /// Divider color
   static const Color divider = Color(0xFFBDBDBD);
   
-  // Dark theme colors
-  static const Color darkBackground = Color(0xFF121212);
-  static const Color darkSurface = Color(0xFF1E1E1E);
-  static const Color darkTextPrimary = Color(0xFFF5F5F5);
-  static const Color darkTextSecondary = Color(0xFFB0B0B0);
+  /// Unselected color
+  static const Color unselected = Color(0xFFBDBDBD);
   
-  // Role-specific colors
-  static const Color studentColor = Color(0xFF5C6BC0); // Indigo
-  static const Color lecturerColor = Color(0xFF66BB6A); // Green
-  static const Color classRepColor = Color(0xFFFFB74D); // Orange
+  /// Disabled color
+  static const Color disabled = Color(0xFFE0E0E0);
   
-  // Category colors for content organization
-  static const Color announcementColor = Color(0xFFE57373); // Red
-  static const Color assignmentColor = Color(0xFF4DB6AC); // Teal
-  static const Color discussionColor = Color(0xFF9575CD); // Deep Purple
-  static const Color resourceColor = Color(0xFF4FC3F7); // Light Blue
-  
-  // Gradient colors
-  static const List<Color> primaryGradient = [
-    Color(0xFF9C27B0),
-    Color(0xFF673AB7),
-  ];
-  
-  // Status colors
-  static const Color online = Color(0xFF4CAF50);
-  static const Color offline = Color(0xFF9E9E9E);
-  static const Color busy = Color(0xFFF44336);
-  
-  AppColors._(); // Private constructor to prevent instantiation
+  /// Private constructor to prevent instantiation
+  AppColors._();
 }

@@ -22,6 +22,9 @@ class MessageBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Create default timestamp
+    final messageTime = message.createdAt ?? DateTime.now();
+    
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
@@ -34,10 +37,10 @@ class MessageBubble extends StatelessWidget {
           if (!isCurrentUser)
             CircleAvatar(
               radius: 16,
-              backgroundColor: AppColors.secondaryLight,
+              backgroundColor: Colors.blueGrey.shade200,
               child: Text(
-                message.senderName.isNotEmpty
-                    ? message.senderName[0].toUpperCase()
+                message.senderId.isNotEmpty
+                    ? message.senderId[0].toUpperCase()
                     : '?',
                 style: const TextStyle(
                   color: Colors.white,
@@ -53,8 +56,7 @@ class MessageBubble extends StatelessWidget {
           Flexible(
             child: InkWell(
               onLongPress: () {
-                // Show message options
-                // _showMessageOptions(context);
+                // This would show message options in a future implementation
               },
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
@@ -65,14 +67,14 @@ class MessageBubble extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Sender name (only for received messages)
-                    if (!isCurrentUser && message.senderName.isNotEmpty) ...[
+                    // Sender ID (only for received messages)
+                    if (!isCurrentUser && message.senderId.isNotEmpty) ...[
                       Text(
-                        message.senderName,
-                        style: const TextStyle(
+                        "User ${message.senderId}",
+                        style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 14,
-                          color: AppColors.secondary,
+                          color: Colors.purple.shade700,
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -80,7 +82,7 @@ class MessageBubble extends StatelessWidget {
                     
                     // Message text
                     Text(
-                      message.text,
+                      message.content,
                       style: TextStyle(
                         color: isCurrentUser ? Colors.white : Colors.black87,
                         fontSize: 16,
@@ -90,7 +92,7 @@ class MessageBubble extends StatelessWidget {
                     // Timestamp
                     const SizedBox(height: 4),
                     Text(
-                      timeago.format(message.timestamp),
+                      timeago.format(messageTime),
                       style: TextStyle(
                         color: isCurrentUser
                             ? Colors.white.withOpacity(0.7)

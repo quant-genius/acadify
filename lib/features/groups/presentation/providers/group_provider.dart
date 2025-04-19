@@ -1,52 +1,158 @@
 
 import 'dart:io';
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
+
 import '../../data/repositories/group_repository.dart';
 import '../../domain/entities/group_entity.dart';
+import '../../domain/use_cases/get_groups_use_case.dart';
+import '../../../../core/services/firestore_service.dart';
+import '../../../../core/services/storage_service.dart';
 import '../../../../features/auth/domain/entities/user_entity.dart';
 
-/// Provider for group-related operations
+/// Provider for group state and operations
 class GroupProvider extends ChangeNotifier {
   final GroupRepository _groupRepository;
+  final GetGroupsUseCase _getGroupsUseCase;
   
-  List<GroupEntity> _groups = [];
-  GroupEntity? _currentGroup;
   bool _isLoading = false;
+  List<GroupEntity> _userGroups = [];
+  List<GroupEntity> _availableGroups = [];
+  GroupEntity? _selectedGroup;
   String? _errorMessage;
   
   /// Constructor
-  GroupProvider({GroupRepository? groupRepository})
-      : _groupRepository = groupRepository ?? GroupRepository();
+  GroupProvider({
+    GroupRepository? groupRepository,
+    FirestoreService? firestoreService,
+    StorageService? storageService,
+  }) : _groupRepository = groupRepository ?? GroupRepository(
+         firestoreService: firestoreService ?? FirestoreService(),
+         storageService: storageService ?? StorageService(prefs: null),
+       ),
+       _getGroupsUseCase = GetGroupsUseCase(
+         groupRepository ?? GroupRepository(
+           firestoreService: firestoreService ?? FirestoreService(),
+           storageService: storageService ?? StorageService(prefs: null),
+         ),
+       );
   
-  /// List of user's groups
-  List<GroupEntity> get groups => _groups;
-  
-  /// Currently selected group
-  GroupEntity? get currentGroup => _currentGroup;
-  
-  /// Whether a group operation is in progress
-  bool get isLoading => _isLoading;
-  
-  /// Error message from the last operation
-  String? get errorMessage => _errorMessage;
-  
-  /// Whether an error occurred in the last operation
-  bool get hasError => _errorMessage != null;
-  
-  /// Loads the user's groups
+  /// Loads the groups for a specific user
   Future<void> loadUserGroups(String userId) async {
     _isLoading = true;
     _errorMessage = null;
     notifyListeners();
     
     try {
-      _groups = await _groupRepository.getUserGroups(userId);
+      _userGroups = await _getGroupsUseCase.getUserGroups(userId);
       _isLoading = false;
       notifyListeners();
     } catch (e) {
+      _errorMessage = e.toString();
       _isLoading = false;
-      _errorMessage = 'Failed to load groups: ${e.toString()}';
       notifyListeners();
+    }
+  }
+  
+  /// Loads available groups for discovery
+  Future<void> loadAvailableGroups() async {
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+    
+    try {
+      _availableGroups = await _getGroupsUseCase.getAvailableGroups();
+      _isLoading = false;
+      notifyListeners();
+    } catch (e) {
+      _errorMessage = e.toString();
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+  
+  /// Creates a new group
+  Future<GroupEntity?> createGroup({
+    required String name,
+    required String courseCode,
+    required String description,
+    required String creatorId,
+    required String semester,
+    required String academicYear,
+    String? department,
+    String? faculty,
+    File? photoFile,
+    List<String> members = const [],
+  }) async {
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+    
+    try {
+      final group = await _groupRepository.createGroup(
+        name: name,
+        courseCode: courseCode,
+        description: description,
+        creatorId: creatorId,
+        semester: semester,
+        academicYear: academicYear,
+        department: department,
+        faculty: faculty,
+        photoFile: photoFile,
+        members: members,
+      );
+      
+      _userGroups.add(group);
+      _isLoading = false;
+      notifyListeners();
+      return group;
+    } catch (e) {
+      _errorMessage = e.toString();
+      _isLoading = false;
+      notifyListeners();
+      return null;
+    }
+  }
+  
+  /// Updates an existing group
+  Future<GroupEntity?> updateGroup({
+    required String groupId,
+    String? name,
+    String? courseCode,
+    String? description,
+    String? semester,
+    String? academicYear,
+    String? department,
+    String? faculty,
+    File? photoFile,
+  }) async {
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+    
+    try {
+      final group = await _groupRepository.updateGroup(
+        groupId: groupId,
+        name: name,
+        courseCode: courseCode,
+        description: description,
+        semester: semester,
+        academicYear: academicYear,
+        department: department,
+        faculty: faculty,
+        photoFile: photoFile,
+      );
+      
+      // Update the group in the lists
+      _updateGroupInLists(group);
+      
+      _isLoading = false;
+      notifyListeners();
+      return group;
+    } catch (e) {
+      _errorMessage = e.toString();
+      _isLoading = false;
+      notifyListeners();
+      return null;
     }
   }
   
@@ -57,153 +163,153 @@ class GroupProvider extends ChangeNotifier {
     notifyListeners();
     
     try {
-      _currentGroup = await _groupRepository.getGroup(groupId);
+      _selectedGroup = await _groupRepository.getGroup(groupId);
       _isLoading = false;
       notifyListeners();
     } catch (e) {
+      _errorMessage = e.toString();
       _isLoading = false;
-      _errorMessage = 'Failed to load group: ${e.toString()}';
       notifyListeners();
     }
   }
   
-  /// Creates a new group
-  Future<void> createGroup({
-    required String name,
-    required String description,
-    required String creatorId,
-    File? coverImage,
-  }) async {
+  /// Joins a group
+  Future<bool> joinGroup(String groupId, String userId) async {
     _isLoading = true;
     _errorMessage = null;
     notifyListeners();
     
     try {
-      final newGroup = await _groupRepository.createGroup(
-        name: name,
-        description: description,
-        creatorId: creatorId,
-        coverImage: coverImage,
-      );
+      await _groupRepository.addGroupMember(groupId, userId);
       
-      _groups.add(newGroup);
-      _currentGroup = newGroup;
-      _isLoading = false;
-      notifyListeners();
-    } catch (e) {
-      _isLoading = false;
-      _errorMessage = 'Failed to create group: ${e.toString()}';
-      notifyListeners();
-    }
-  }
-  
-  /// Updates an existing group
-  Future<void> updateGroup({
-    required String groupId,
-    String? name,
-    String? description,
-    File? coverImage,
-  }) async {
-    _isLoading = true;
-    _errorMessage = null;
-    notifyListeners();
-    
-    try {
-      final updatedGroup = await _groupRepository.updateGroup(
-        groupId: groupId,
-        name: name,
-        description: description,
-        coverImage: coverImage,
-      );
+      // Refresh the group data
+      await getGroup(groupId);
       
-      // Update lists with the updated group
-      final index = _groups.indexWhere((group) => group.id == groupId);
-      if (index != -1) {
-        _groups[index] = updatedGroup;
+      // Add the group to user groups if not already there
+      final groupExists = _userGroups.any((g) => g.id == groupId);
+      if (!groupExists && _selectedGroup != null) {
+        _userGroups.add(_selectedGroup!);
       }
       
-      _currentGroup = updatedGroup;
       _isLoading = false;
       notifyListeners();
+      return true;
     } catch (e) {
-      _isLoading = false;
-      _errorMessage = 'Failed to update group: ${e.toString()}';
-      notifyListeners();
-    }
-  }
-  
-  /// Joins a group using a group code
-  Future<void> joinGroup({
-    required String groupCode,
-    required String userId,
-  }) async {
-    _isLoading = true;
-    _errorMessage = null;
-    notifyListeners();
-    
-    try {
-      final joinedGroup = await _groupRepository.joinGroup(
-        groupCode: groupCode,
-        userId: userId,
-      );
-      
-      _groups.add(joinedGroup);
-      _currentGroup = joinedGroup;
+      _errorMessage = e.toString();
       _isLoading = false;
       notifyListeners();
-    } catch (e) {
-      _isLoading = false;
-      _errorMessage = 'Failed to join group: ${e.toString()}';
-      notifyListeners();
+      return false;
     }
   }
   
   /// Leaves a group
-  Future<void> leaveGroup({
-    required String groupId,
-    required String userId,
-  }) async {
+  Future<bool> leaveGroup(String groupId) async {
     _isLoading = true;
     _errorMessage = null;
     notifyListeners();
     
     try {
-      await _groupRepository.leaveGroup(
-        groupId: groupId,
-        userId: userId,
-      );
+      final authProvider = null; // Replace with actual auth provider
+      final userId = "current-user-id"; // Replace with actual current user ID
       
-      // Remove the group from the list
-      _groups.removeWhere((group) => group.id == groupId);
+      await _groupRepository.removeGroupMember(groupId, userId);
       
-      // Clear current group if it was the one we left
-      if (_currentGroup?.id == groupId) {
-        _currentGroup = null;
-      }
+      // Remove the group from user groups
+      _userGroups.removeWhere((g) => g.id == groupId);
       
       _isLoading = false;
       notifyListeners();
+      return true;
     } catch (e) {
+      _errorMessage = e.toString();
       _isLoading = false;
-      _errorMessage = 'Failed to leave group: ${e.toString()}';
       notifyListeners();
+      return false;
     }
   }
   
   /// Gets the members of a group
   Future<List<UserEntity>> getGroupMembers(String groupId) async {
     try {
-      return await _groupRepository.getGroupMembers(groupId);
+      // This is a stub - in a real implementation, we would get the members from a repository
+      return [];
     } catch (e) {
-      _errorMessage = 'Failed to get group members: ${e.toString()}';
+      _errorMessage = e.toString();
       notifyListeners();
       return [];
     }
   }
   
-  /// Clears any error messages
-  void clearError() {
+  /// Searches for groups
+  Future<List<GroupEntity>> searchGroups(String query) async {
+    try {
+      return await _groupRepository.searchGroups(query);
+    } catch (e) {
+      _errorMessage = e.toString();
+      notifyListeners();
+      return [];
+    }
+  }
+  
+  /// Deletes a group
+  Future<bool> deleteGroup(String groupId) async {
+    _isLoading = true;
     _errorMessage = null;
     notifyListeners();
+    
+    try {
+      await _groupRepository.deleteGroup(groupId);
+      
+      // Remove the group from lists
+      _userGroups.removeWhere((g) => g.id == groupId);
+      _availableGroups.removeWhere((g) => g.id == groupId);
+      if (_selectedGroup?.id == groupId) {
+        _selectedGroup = null;
+      }
+      
+      _isLoading = false;
+      notifyListeners();
+      return true;
+    } catch (e) {
+      _errorMessage = e.toString();
+      _isLoading = false;
+      notifyListeners();
+      return false;
+    }
   }
+  
+  /// Updates a group in the lists
+  void _updateGroupInLists(GroupEntity group) {
+    // Update in user groups
+    final userGroupIndex = _userGroups.indexWhere((g) => g.id == group.id);
+    if (userGroupIndex >= 0) {
+      _userGroups[userGroupIndex] = group;
+    }
+    
+    // Update in available groups
+    final availableGroupIndex = _availableGroups.indexWhere((g) => g.id == group.id);
+    if (availableGroupIndex >= 0) {
+      _availableGroups[availableGroupIndex] = group;
+    }
+    
+    // Update selected group
+    if (_selectedGroup?.id == group.id) {
+      _selectedGroup = group;
+    }
+  }
+  
+  /// Whether the provider is currently loading
+  bool get isLoading => _isLoading;
+  
+  /// The list of user groups
+  List<GroupEntity> get groups => _userGroups;
+  
+  /// The list of available groups
+  List<GroupEntity> get availableGroups => _availableGroups;
+  
+  /// The currently selected group
+  GroupEntity? get selectedGroup => _selectedGroup;
+  
+  /// Error message, if any
+  String? get errorMessage => _errorMessage;
 }

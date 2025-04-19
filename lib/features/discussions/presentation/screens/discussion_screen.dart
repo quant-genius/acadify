@@ -89,16 +89,14 @@ class _DiscussionScreenState extends State<DiscussionScreen> {
 
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     final discussionProvider = Provider.of<DiscussionProvider>(context, listen: false);
-    final userId = authProvider.currentUser!.id;
+    final userId = authProvider.user!.id;
 
     // Clear input field
     _messageController.clear();
 
     try {
       await discussionProvider.sendMessage(
-        groupId: widget.groupId,
-        senderId: userId,
-        text: text,
+        content: text,
       );
       
       // Scroll to bottom after sending
@@ -117,15 +115,11 @@ class _DiscussionScreenState extends State<DiscussionScreen> {
     }
   }
 
-  void _showMessageOptions(BuildContext context) {
-    // This would be implemented to show options for a message (copy, delete, etc.)
-  }
-
   @override
   Widget build(BuildContext context) {
     final discussionProvider = Provider.of<DiscussionProvider>(context);
     final authProvider = Provider.of<AuthProvider>(context);
-    final currentUserId = authProvider.currentUser?.id;
+    final currentUserId = authProvider.user?.id;
     
     return Scaffold(
       appBar: AppBar(

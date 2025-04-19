@@ -4,27 +4,13 @@ import 'package:flutter/material.dart';
 import '../features/auth/presentation/screens/login_screen.dart';
 import '../features/auth/presentation/screens/register_screen.dart';
 import '../features/auth/presentation/screens/forgot_password_screen.dart';
-import '../features/groups/presentation/screens/group_screen.dart';
-import '../features/groups/presentation/screens/group_members_screen.dart';
-import '../features/groups/presentation/screens/create_group_screen.dart';
-import '../features/groups/presentation/screens/edit_group_screen.dart';
-import '../features/assignments/presentation/screens/assignment_screen.dart';
-import '../features/assignments/presentation/screens/create_assignment_screen.dart';
-import '../features/assignments/presentation/screens/edit_assignment_screen.dart';
-import '../features/assignments/presentation/screens/assignment_submission_screen.dart';
-import '../features/assignments/presentation/screens/assignment_submissions_list_screen.dart';
-import '../features/profile/presentation/screens/profile_screen.dart';
-import '../features/profile/presentation/screens/edit_profile_screen.dart';
-import '../features/posts/presentation/screens/post_detail_screen.dart';
-import '../features/posts/presentation/screens/create_post_screen.dart';
-import '../features/posts/presentation/screens/edit_post_screen.dart';
-import '../features/discussions/presentation/screens/discussion_screen.dart';
 import '../shared/screens/home_screen.dart';
-import '../shared/screens/search_screen.dart';
-import '../shared/screens/notifications_screen.dart';
-import '../shared/screens/settings_screen.dart';
 import '../shared/screens/splash_screen.dart';
 import '../shared/screens/onboarding_screen.dart';
+import '../shared/screens/settings_screen.dart';
+import '../features/profile/presentation/screens/profile_screen.dart';
+import '../features/discussions/presentation/screens/discussion_screen.dart';
+import '../features/assignments/presentation/screens/assignment_screen.dart';
 
 /// Class for handling app routes
 class AppRoutes {
@@ -78,22 +64,36 @@ class AppRoutes {
       case group:
         final groupId = settings.arguments as String;
         return MaterialPageRoute(
-          builder: (_) => GroupScreen(groupId: groupId),
+          builder: (_) => Scaffold(
+            appBar: AppBar(title: const Text('Group')),
+            body: const Center(child: Text('Group Screen - Implement Me')),
+          ),
         );
         
       case groupMembers:
         final groupId = settings.arguments as String;
         return MaterialPageRoute(
-          builder: (_) => GroupMembersScreen(groupId: groupId),
+          builder: (_) => Scaffold(
+            appBar: AppBar(title: const Text('Group Members')),
+            body: const Center(child: Text('Group Members Screen - Implement Me')),
+          ),
         );
         
       case createGroup:
-        return MaterialPageRoute(builder: (_) => const CreateGroupScreen());
+        return MaterialPageRoute(
+          builder: (_) => Scaffold(
+            appBar: AppBar(title: const Text('Create Group')),
+            body: const Center(child: Text('Create Group Screen - Implement Me')),
+          ),
+        );
         
       case editGroup:
         final groupId = settings.arguments as String;
         return MaterialPageRoute(
-          builder: (_) => EditGroupScreen(groupId: groupId),
+          builder: (_) => Scaffold(
+            appBar: AppBar(title: const Text('Edit Group')),
+            body: const Center(child: Text('Edit Group Screen - Implement Me')),
+          ),
         );
         
       case profile:
@@ -103,36 +103,49 @@ class AppRoutes {
         );
         
       case editProfile:
-        return MaterialPageRoute(builder: (_) => const EditProfileScreen());
+        return MaterialPageRoute(
+          builder: (_) => Scaffold(
+            appBar: AppBar(title: const Text('Edit Profile')),
+            body: const Center(child: Text('Edit Profile Screen - Implement Me')),
+          ),
+        );
         
       case postDetail:
         final args = settings.arguments as Map<String, String>;
         return MaterialPageRoute(
-          builder: (_) => PostDetailScreen(
-            groupId: args['groupId']!,
-            postId: args['postId']!,
+          builder: (_) => Scaffold(
+            appBar: AppBar(title: const Text('Post Detail')),
+            body: const Center(child: Text('Post Detail Screen - Implement Me')),
           ),
         );
         
       case createPost:
         final groupId = settings.arguments as String;
         return MaterialPageRoute(
-          builder: (_) => CreatePostScreen(groupId: groupId),
+          builder: (_) => Scaffold(
+            appBar: AppBar(title: const Text('Create Post')),
+            body: const Center(child: Text('Create Post Screen - Implement Me')),
+          ),
         );
         
       case editPost:
         final args = settings.arguments as Map<String, String>;
         return MaterialPageRoute(
-          builder: (_) => EditPostScreen(
-            groupId: args['groupId']!,
-            postId: args['postId']!,
+          builder: (_) => Scaffold(
+            appBar: AppBar(title: const Text('Edit Post')),
+            body: const Center(child: Text('Edit Post Screen - Implement Me')),
           ),
         );
         
       case discussion:
-        final groupId = settings.arguments as String;
+        final args = settings.arguments as Map<String, String>;
+        final groupId = args['groupId']!;
+        final groupName = args['groupName']!;
         return MaterialPageRoute(
-          builder: (_) => DiscussionScreen(groupId: groupId),
+          builder: (_) => DiscussionScreen(
+            groupId: groupId,
+            groupName: groupName,
+          ),
         );
         
       case assignment:
@@ -147,33 +160,36 @@ class AppRoutes {
       case createAssignment:
         final groupId = settings.arguments as String;
         return MaterialPageRoute(
-          builder: (_) => CreateAssignmentScreen(groupId: groupId),
+          builder: (_) => Scaffold(
+            appBar: AppBar(title: const Text('Create Assignment')),
+            body: const Center(child: Text('Create Assignment Screen - Implement Me')),
+          ),
         );
         
       case editAssignment:
         final args = settings.arguments as Map<String, String>;
         return MaterialPageRoute(
-          builder: (_) => EditAssignmentScreen(
-            groupId: args['groupId']!,
-            assignmentId: args['assignmentId']!,
+          builder: (_) => Scaffold(
+            appBar: AppBar(title: const Text('Edit Assignment')),
+            body: const Center(child: Text('Edit Assignment Screen - Implement Me')),
           ),
         );
         
       case submitAssignment:
         final args = settings.arguments as Map<String, String>;
         return MaterialPageRoute(
-          builder: (_) => AssignmentSubmissionScreen(
-            groupId: args['groupId']!,
-            assignmentId: args['assignmentId']!,
+          builder: (_) => Scaffold(
+            appBar: AppBar(title: const Text('Submit Assignment')),
+            body: const Center(child: Text('Submit Assignment Screen - Implement Me')),
           ),
         );
         
       case assignmentSubmissions:
         final args = settings.arguments as Map<String, String>;
         return MaterialPageRoute(
-          builder: (_) => AssignmentSubmissionsListScreen(
-            groupId: args['groupId']!,
-            assignmentId: args['assignmentId']!,
+          builder: (_) => Scaffold(
+            appBar: AppBar(title: const Text('Assignment Submissions')),
+            body: const Center(child: Text('Assignment Submissions Screen - Implement Me')),
           ),
         );
         
@@ -181,10 +197,20 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => const SettingsScreen());
         
       case search:
-        return MaterialPageRoute(builder: (_) => const SearchScreen());
+        return MaterialPageRoute(
+          builder: (_) => Scaffold(
+            appBar: AppBar(title: const Text('Search')),
+            body: const Center(child: Text('Search Screen - Implement Me')),
+          ),
+        );
         
       case notifications:
-        return MaterialPageRoute(builder: (_) => const NotificationsScreen());
+        return MaterialPageRoute(
+          builder: (_) => Scaffold(
+            appBar: AppBar(title: const Text('Notifications')),
+            body: const Center(child: Text('Notifications Screen - Implement Me')),
+          ),
+        );
         
       default:
         // If route is not defined, return to login screen
@@ -192,5 +218,6 @@ class AppRoutes {
     }
   }
   
-  AppRoutes._(); // Private constructor to prevent instantiation
+  // Private constructor to prevent instantiation
+  AppRoutes._();
 }
