@@ -130,6 +130,22 @@ class Validators {
     return null;
   }
   
+  /// Validates that a confirm password matches the password
+  ///
+  /// [value] - The confirm password value
+  /// [password] - The original password to compare against
+  static String? validateConfirmPassword(String? value, String? password) {
+    if (value == null || value.isEmpty) {
+      return 'Confirm password is required';
+    }
+    
+    if (value != password) {
+      return 'Passwords do not match';
+    }
+    
+    return null;
+  }
+  
   // Private constructor to prevent instantiation
   Validators._();
 }

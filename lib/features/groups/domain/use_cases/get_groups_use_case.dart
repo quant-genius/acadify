@@ -16,4 +16,14 @@ class GetGroupsUseCase {
   Future<List<GroupEntity>> call(String userId) {
     return _groupRepository.getUserGroups(userId);
   }
+  
+  /// Gets groups for a specific user
+  Future<List<GroupEntity>> getUserGroups(String userId) {
+    return _groupRepository.getUserGroups(userId);
+  }
+  
+  /// Gets available groups for discovery
+  Future<List<GroupEntity>> getAvailableGroups() {
+    return _groupRepository.getAvailableGroups();
+  }
 }

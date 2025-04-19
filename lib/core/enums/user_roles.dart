@@ -86,4 +86,9 @@ extension UserRoleExtension on UserRole {
         return UserRole.student;
     }
   }
+  
+  /// Whether this role can create groups
+  bool get canCreateGroups {
+    return this == UserRole.lecturer || this == UserRole.admin;
+  }
 }

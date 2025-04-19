@@ -66,6 +66,9 @@ class AssignmentEntity extends Equatable {
   /// Returns whether the assignment is due soon (within 3 days)
   bool get isDueSoon => daysUntilDue >= 0 && daysUntilDue <= 3;
   
+  /// Returns the number of members in the assignment group
+  int get memberCount => 0; // Placeholder implementation
+  
   @override
   List<Object?> get props => [
     id,

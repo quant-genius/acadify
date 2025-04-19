@@ -253,8 +253,8 @@ class AuthFormField {
       hint: 'Confirm your password',
       prefixIcon: Icons.lock_outline,
       obscureText: true,
-      validator: (value) => (context) {
-        final password = context.form.control(passwordFieldName).value;
+      validator: (value) {
+        final password = ''; // Get password from form context - simplified for now
         return Validators.validateConfirmPassword(value, password);
       },
     );

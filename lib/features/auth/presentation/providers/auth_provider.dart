@@ -3,8 +3,10 @@ import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../core/enums/user_roles.dart';
+import '../../../../core/services/auth_service.dart';
 import '../../data/repositories/auth_repository.dart';
 import '../../domain/entities/user_entity.dart';
+import '../../domain/enums/auth_state.dart';
 import '../../domain/use_cases/login_use_case.dart';
 import '../../domain/use_cases/register_use_case.dart';
 import '../../domain/use_cases/reset_password_use_case.dart';
@@ -26,11 +28,24 @@ class AuthProvider extends ChangeNotifier {
   AuthProvider({
     required SharedPreferences prefs,
     AuthRepository? authRepository,
+    AuthService? authService,
   })  : _prefs = prefs,
-        _authRepository = authRepository ?? AuthRepository(),
-        _loginUseCase = LoginUseCase(authRepository ?? AuthRepository()),
-        _registerUseCase = RegisterUseCase(authRepository ?? AuthRepository()),
-        _resetPasswordUseCase = ResetPasswordUseCase(authRepository ?? AuthRepository()) {
+        _authRepository = authRepository ?? AuthRepository(
+          authService: authService ?? AuthService(prefs: prefs),
+          prefs: prefs,
+        ),
+        _loginUseCase = LoginUseCase(authRepository ?? AuthRepository(
+          authService: authService ?? AuthService(prefs: prefs),
+          prefs: prefs,
+        )),
+        _registerUseCase = RegisterUseCase(authRepository ?? AuthRepository(
+          authService: authService ?? AuthService(prefs: prefs),
+          prefs: prefs,
+        )),
+        _resetPasswordUseCase = ResetPasswordUseCase(authRepository ?? AuthRepository(
+          authService: authService ?? AuthService(prefs: prefs),
+          prefs: prefs,
+        )) {
     // Check if user is already logged in
     _checkAuthStatus();
   }
@@ -50,17 +65,22 @@ class AuthProvider extends ChangeNotifier {
         if (user != null) {
           _user = user;
           _isAuthenticated = true;
+          _authState = AuthState.authenticated;
         } else {
           // Clear preferences if user is not found in Firebase
           await _prefs.setBool('is_logged_in', false);
           _isAuthenticated = false;
+          _authState = AuthState.unauthenticated;
         }
       } else {
         _isAuthenticated = false;
+        _authState = AuthState.unauthenticated;
       }
     } catch (e) {
       _errorMessage = e.toString();
       _isAuthenticated = false;
+      _authState = AuthState.error;
+      _hasError = true;
     }
 
     _isLoading = false;
@@ -252,4 +272,18 @@ class AuthProvider extends ChangeNotifier {
   
   /// For backward compatibility - alias for user
   UserEntity? get currentUser => _user;
+  
+  /// The current authentication state
+  AuthState get authState => _authState;
+  
+  /// Whether there is an error
+  bool get hasError => _hasError;
+  
+  /// Whether the user is not authenticated
+  bool get isNotAuthenticated => !_isAuthenticated;
+  
+  /// Get the shared preferences instance
+  SharedPreferences? getPrefs() {
+    return _prefs;
+  }
 }

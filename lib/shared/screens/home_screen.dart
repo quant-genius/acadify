@@ -114,7 +114,7 @@ class _HomeScreenState extends State<HomeScreen> {
     
     return Scaffold(
       appBar: CustomAppBar(
-        title: const Text(AppStrings.appName),
+        title: Text(AppStrings.appName),
         actions: [
           IconButton(
             icon: const Icon(Icons.search),
@@ -213,7 +213,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             ListTile(
               leading: const Icon(Icons.logout),
-              title: const Text(AppStrings.logout),
+              title: const Text("Logout"),
               onTap: () async {
                 Navigator.of(context).pop();
                 await authProvider.logout();

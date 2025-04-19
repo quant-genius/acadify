@@ -125,6 +125,19 @@ class AuthRepository {
     return await getUserProfile(userId);
   }
   
+  /// Gets the current user entity
+  Future<UserEntity?> getCurrentUser() async {
+    try {
+      final userId = currentUserId;
+      if (userId == null) {
+        return null;
+      }
+      return await getUserProfile(userId);
+    } catch (e) {
+      return null;
+    }
+  }
+  
   /// Streams the current user's profile
   Stream<UserEntity> streamUserProfile(String userId) {
     return _firestore

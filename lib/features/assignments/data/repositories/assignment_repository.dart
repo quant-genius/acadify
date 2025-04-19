@@ -26,7 +26,7 @@ class AssignmentRepository {
     FirebaseFirestore? firestore,
     FirebaseStorage? storage,
   }) : _firestoreService = firestoreService ?? FirestoreService(),
-       _storageService = storageService ?? StorageService(),
+       _storageService = storageService ?? StorageService(prefs: null),
        _firestore = firestore ?? FirebaseFirestore.instance,
        _storage = storage ?? FirebaseStorage.instance;
   

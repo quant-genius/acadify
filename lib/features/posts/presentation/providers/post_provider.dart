@@ -100,6 +100,7 @@ class PostProvider extends ChangeNotifier {
       if (attachmentFiles != null && attachmentFiles.isNotEmpty) {
         for (final file in attachmentFiles) {
           final url = await _storageService.uploadPostAttachment(
+            file,
             groupId: groupId,
             postId: DateTime.now().millisecondsSinceEpoch.toString(), // Temporary ID
             file: file,

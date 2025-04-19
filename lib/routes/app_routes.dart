@@ -193,7 +193,7 @@ class AppRoutes {
           ),
         );
         
-      case settings:
+      case AppRoutes.settings:
         return MaterialPageRoute(builder: (_) => const SettingsScreen());
         
       case search:
