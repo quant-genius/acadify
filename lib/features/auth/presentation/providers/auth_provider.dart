@@ -23,6 +23,8 @@ class AuthProvider extends ChangeNotifier {
   bool _isAuthenticated = false;
   String? _errorMessage;
   UserEntity? _user;
+  AuthState _authState = AuthState.initial;
+  bool _hasError = false;
 
   /// Constructor for AuthProvider
   AuthProvider({
@@ -283,7 +285,7 @@ class AuthProvider extends ChangeNotifier {
   bool get isNotAuthenticated => !_isAuthenticated;
   
   /// Get the shared preferences instance
-  SharedPreferences? getPrefs() {
+  SharedPreferences getPrefs() {
     return _prefs;
   }
 }

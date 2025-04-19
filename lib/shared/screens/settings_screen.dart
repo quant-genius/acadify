@@ -1,14 +1,13 @@
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
-import '../../core/constants/colors.dart';
+import '../../core/constants/strings.dart';
 import '../../features/auth/presentation/providers/auth_provider.dart';
-import '../providers/app_provider.dart';
+import '../../shared/providers/app_provider.dart';
 import '../../routes/app_routes.dart';
 
-/// Screen for app settings
+/// Settings screen with customization options
 class SettingsScreen extends StatefulWidget {
   /// Creates a SettingsScreen
   const SettingsScreen({Key? key}) : super(key: key);
@@ -239,7 +238,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ),
             onTap: () {
-              _showLogoutConfirmation();
+              _handleLogout(context);
             },
           ),
         ],
@@ -247,39 +246,35 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
   
-  void _showLogoutConfirmation() {
-    showDialog(
+  /// Handles logout action
+  Future<void> _handleLogout(BuildContext context) async {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    
+    // Show confirmation dialog
+    final shouldLogout = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Logout'),
         content: const Text('Are you sure you want to logout?'),
         actions: [
           TextButton(
-            onPressed: () => Navigator.of(context).pop(),
+            onPressed: () => Navigator.of(context).pop(false),
             child: const Text('Cancel'),
           ),
           TextButton(
-            onPressed: () async {
-              Navigator.of(context).pop();
-              
-              final authProvider = Provider.of<AuthProvider>(
-                context,
-                listen: false,
-              );
-              
-              await authProvider.logout();
-              
-              if (authProvider.isNotAuthenticated && mounted) {
-                Navigator.of(context).pushReplacementNamed(AppRoutes.login);
-              }
-            },
-            style: TextButton.styleFrom(
-              foregroundColor: Colors.red,
-            ),
+            onPressed: () => Navigator.of(context).pop(true),
             child: const Text('Logout'),
           ),
         ],
       ),
-    );
+    ) ?? false;
+    
+    if (shouldLogout) {
+      await authProvider.logout();
+      
+      if (authProvider.isNotAuthenticated && mounted) {
+        Navigator.of(context).pushReplacementNamed(AppRoutes.login);
+      }
+    }
   }
 }

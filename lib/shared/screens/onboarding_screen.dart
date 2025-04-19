@@ -1,10 +1,6 @@
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter/services.dart';
 
-import '../../core/constants/colors.dart';
-import '../../core/constants/assets.dart';
 import '../../features/auth/presentation/providers/auth_provider.dart';
 import '../../routes/app_routes.dart';
 
@@ -94,19 +90,27 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     }
   }
   
-  void _skipOnboarding() async {
-    final prefs = await Provider.of<AuthProvider>(context, listen: false).getPrefs();
-    await prefs?.setBool('has_seen_onboarding', true);
+  /// Marks onboarding as completed and navigates to login
+  Future<void> _completeOnboarding() async {
+    // Mark onboarding as completed in preferences
+    final prefs = Provider.of<AuthProvider>(context, listen: false).getPrefs();
+    await prefs.setBool('has_seen_onboarding', true);
     
     if (!mounted) return;
+    
+    // Navigate to login screen
     Navigator.of(context).pushReplacementNamed(AppRoutes.login);
   }
   
-  void _finishOnboarding() async {
-    final prefs = await Provider.of<AuthProvider>(context, listen: false).getPrefs();
-    await prefs?.setBool('has_seen_onboarding', true);
+  /// Skips onboarding and navigates to login
+  Future<void> _skipOnboarding() async {
+    // Mark onboarding as completed in preferences
+    final prefs = Provider.of<AuthProvider>(context, listen: false).getPrefs();
+    await prefs.setBool('has_seen_onboarding', true);
     
     if (!mounted) return;
+    
+    // Navigate to login screen
     Navigator.of(context).pushReplacementNamed(AppRoutes.login);
   }
 
@@ -217,7 +221,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 child: ElevatedButton(
                   onPressed: _currentPage < _pages.length - 1
                       ? _nextPage
-                      : _finishOnboarding,
+                      : _completeOnboarding,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
                     foregroundColor: Colors.white,

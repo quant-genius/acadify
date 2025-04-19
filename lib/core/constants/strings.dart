@@ -122,14 +122,12 @@ class AppStrings {
   static const String version = 'Version';
   static const String termsAndConditions = 'Terms and Conditions';
   static const String privacyPolicy = 'Privacy Policy';
-  static const String about = 'About';
   static const String contactUs = 'Contact Us';
   static const String rateApp = 'Rate App';
   static const String shareApp = 'Share App';
-  static const String logout = 'Logout';
-  static const String deleteAccount = 'Delete Account';
   static const String pushNotifications = 'Push Notifications';
   static const String emailNotifications = 'Email Notifications';
+  static const String deleteAccount = 'Delete Account';
   
   // Private constructor to prevent instantiation
   AppStrings._();

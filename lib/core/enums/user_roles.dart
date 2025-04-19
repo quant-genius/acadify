@@ -67,7 +67,10 @@ extension UserRoleExtension on UserRole {
   bool get canManageCourses {
     return this == UserRole.lecturer || this == UserRole.admin;
   }
-  
+}
+
+/// Utility functions for UserRole
+class UserRoleUtils {
   /// Create a UserRole from a string
   static UserRole fromString(String roleString) {
     switch (roleString.toLowerCase()) {
@@ -87,8 +90,6 @@ extension UserRoleExtension on UserRole {
     }
   }
   
-  /// Whether this role can create groups
-  bool get canCreateGroups {
-    return this == UserRole.lecturer || this == UserRole.admin;
-  }
+  // Private constructor to prevent instantiation
+  UserRoleUtils._();
 }

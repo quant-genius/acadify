@@ -5,6 +5,7 @@ import 'package:animated_text_kit/animated_text_kit.dart';
 
 import '../../core/constants/colors.dart';
 import '../../core/constants/assets.dart';
+import '../../features/auth/domain/enums/auth_state.dart';
 import '../../features/auth/presentation/providers/auth_provider.dart';
 import '../../routes/app_routes.dart';
 
@@ -68,8 +69,8 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
       Navigator.of(context).pushReplacementNamed(AppRoutes.home);
     } else {
       // If first time user, show onboarding, otherwise go to login
-      final prefs = await Provider.of<AuthProvider>(context, listen: false).getPrefs();
-      final hasSeenOnboarding = prefs?.getBool('has_seen_onboarding') ?? false;
+      final prefs = authProvider.getPrefs();
+      final hasSeenOnboarding = prefs.getBool('has_seen_onboarding') ?? false;
       
       if (hasSeenOnboarding) {
         Navigator.of(context).pushReplacementNamed(AppRoutes.login);
